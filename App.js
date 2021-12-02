@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   Image,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { Video, AVPlaybackStatus } from "expo-av";
 
 function WelcomeScreen({ navigation }) {
   return (
@@ -22,7 +24,6 @@ function WelcomeScreen({ navigation }) {
           source={require("./assets/Life_Full_of_Zest.jpg")}
           style={{ height: "150%", width: "100%" }}
         />
-        {/* <Image source={{uri: 'assets:/Life_Full_of_Zest.jpg'}} style={{height: 400, width: 400}}/> */}
       </View>
       <View style={styles.flexThree}>
         <View style={styles.buttonPadding}>
@@ -62,7 +63,7 @@ function LoginScreen({ navigation }) {
             autoCapitalize="none"
             backgroundColor="white"
             label="Email"
-            onChangeText={(u)=>setEmail(u)}
+            onChangeText={(u) => setEmail(u)}
             placeholder="Insert Email Address"
             style={styles.insertUserText}
             textContentType="emailAddress"
@@ -72,7 +73,7 @@ function LoginScreen({ navigation }) {
             autoCapitalize="none"
             backgroundColor="white"
             label="Password"
-            onChangeText={(p)=>setPassword(p)}
+            onChangeText={(p) => setPassword(p)}
             placeholder="Insert Password"
             secureTextEntry
             style={styles.insertUserText}
@@ -120,7 +121,7 @@ function CreateAccountScreen({ navigation }) {
             autoCapitalize="none"
             backgroundColor="white"
             label="Email"
-            onChangeText={(u)=>setEmail(u)}
+            onChangeText={(u) => setEmail(u)}
             placeholder="Insert Email Address"
             style={styles.insertUserText}
             textContentType="emailAddress"
@@ -130,7 +131,7 @@ function CreateAccountScreen({ navigation }) {
             autoCapitalize="none"
             backgroundColor="white"
             label="Password"
-            onChangeText={(p)=>setPassword(p)}
+            onChangeText={(p) => setPassword(p)}
             placeholder="Insert Password"
             secureTextEntry
             style={styles.insertUserText}
@@ -141,7 +142,7 @@ function CreateAccountScreen({ navigation }) {
             autoCapitalize="none"
             backgroundColor="white"
             label="Repeat Password"
-            onChangeText={(p)=>setRepeatPassword(p)}
+            onChangeText={(p) => setRepeatPassword(p)}
             placeholder="Repeat Password"
             secureTextEntry
             style={styles.insertUserText}
@@ -175,18 +176,82 @@ function CreateAccountScreen({ navigation }) {
 }
 
 function HomeScreen({ navigation }) {
+  const video1 = useRef(null);
+  const video2 = useRef(null);
+  const video3 = useRef(null);
+  const [status, setStatus] = useState({});
   return (
     <View style={styles.container}>
-      <View style={styles.flexOne}>
-        <Text style={styles.title}>Home</Text>
-      </View>
-      <TouchableOpacity
-        title={"Welcome"}
-        onPress={() => navigation.navigate("Welcome")}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Log Out</Text>
-      </TouchableOpacity>
+      <ScrollView style={{ marginHorizontal: 20 }}>
+        <View style={styles.flexOne}>
+          <Text style={styles.title}>Home</Text>
+        </View>
+        <View style={styles.flexTwo}>
+          <View style={styles.videoArray}>
+          <Video
+            ref={video1}
+            resizeMode="cover"
+            onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+            source={require("./assets/videos/MediaPitch.mp4")}
+            style={styles.videoStyle}
+            useNativeControls
+          />
+          <TouchableOpacity
+            onPress={() =>
+              status.isPlaying
+                ? video1.current.pauseAsync()
+                : video1.current.playAsync()
+            }
+            style={styles.videoButtons}
+            title={status.isPlaying ? "Pause" : "Play"}
+          ><Text style={styles.videoButtonText}>{status.isPlaying ? "Pause" : "Play"}</Text></TouchableOpacity>
+          <Video
+            ref={video2}
+            resizeMode="cover"
+            onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+            source={require("./assets/videos/ARollMediaPitch.mp4")}
+            style={styles.videoStyle}
+            useNativeControls
+          />
+          <TouchableOpacity
+            onPress={() =>
+              status.isPlaying
+                ? video2.current.pauseAsync()
+                : video2.current.playAsync()
+            }
+            style={styles.videoButtons}
+            title={status.isPlaying ? "Pause" : "Play"}
+          ><Text style={styles.videoButtonText}>{status.isPlaying ? "Pause" : "Play"}</Text></TouchableOpacity>
+           <Video
+            ref={video3}
+            resizeMode="cover"
+            onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+            source={require("./assets/videos/OnlinePilatesMatClassWithLifeFullofZestRealTime.mp4")}
+            style={styles.videoStyle}
+            useNativeControls
+          />
+          <TouchableOpacity
+            onPress={() =>
+              status.isPlaying
+                ? video3.current.pauseAsync()
+                : video3.current.playAsync()
+            }
+            style={styles.videoButtons}
+            title={status.isPlaying ? "Pause" : "Play"}
+          ><Text style={styles.videoButtonText}>{status.isPlaying ? "Pause" : "Play"}</Text></TouchableOpacity>
+          </View>
+        </View>
+
+        <View>
+          <TouchableOpacity
+            title={"Welcome"}
+            onPress={() => navigation.navigate("Welcome")}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Log Out</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -262,6 +327,28 @@ const styles = StyleSheet.create({
     fontSize: 29,
     fontWeight: "bold",
     padding: 30,
+  },
+  videoArray: {
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  videoButtons: {
+    backgroundColor: "#ff7f50",
+    height: 50,
+    marginTop: 10,
+    width: 100,
+  },
+  videoButtonText:{
+    color: "white",
+    fontSize: 15,
+    fontWeight: "bold",
+    marginLeft: 15,
+    padding: 10,
+  },
+  videoStyle: {
+    height: 300,
+    margin: 20,
+    width: 500,
   },
 });
 
